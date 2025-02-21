@@ -1,0 +1,53 @@
+https server python3 sur la machine local 
+##############################################################################################################################################################################################################################################
+1. Générer la clé privée :
+COMMANDE : openssl genpkey -algorithm RSA -out key.pem -pkeyopt rsa_keygen_bits:2048
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2. Générer un certificat auto-signé :
+COMMANDE : openssl req -new -x509 -key key.pem -out cert.pem -days 365
+Lors de la génération du certificat, tu devras renseigner certaines informations (comme le pays, le nom de l'organisation, etc.). Si tu es juste en train de tester, tu peux remplir ces champs avec des valeurs fictives.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Mettre à jour ton script Python :
+Si tu as généré les fichiers cert.pem et key.pem et qu'ils se trouvent dans le même répertoire que ton script, alors ton code devrait fonctionner. Assure-toi que ton script fait référence au bon emplacement pour ces fichiers.
+Exemple de code modifié avec des chemins relatifs ou absolus corrects :
+############################################################################# CODE PYTHON FILE #################################################################################################################################################################
+import http.server
+import ssl
+
+server_address = ('', 443)  # Le port HTTPS par défaut
+httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
+
+# Remplacer 'cert.pem' et 'key.pem' par les bons chemins si nécessaires
+certfile = 'cert.pem'  # Assure-toi que le fichier existe
+keyfile = 'key.pem'    # Assure-toi que le fichier existe
+httpd.socket = ssl.wrap_socket(httpd.socket, certfile=certfile, keyfile=keyfile, server_side=True)
+
+print("Serving on https://localhost:443")
+httpd.serve_forever()
+Si les fichiers sont dans un répertoire spécifique (par exemple, /home/werdex/ssl/), utilise des chemins absolus comme ceci :
+
+certfile = '/home/werdex/ssl/cert.pem'
+keyfile = '/home/werdex/ssl/key.pem'
+
+4. Vérifier les permissions :
+Si les fichiers existent mais que tu obtiens toujours l'erreur, assure-toi que ton utilisateur a bien les permissions nécessaires pour lire ces fichiers. Tu peux vérifier les permissions avec la commande suivante :
+
+ls -l cert.pem key.pem
+Si tu n'as pas les permissions adéquates, tu peux ajuster les permissions en utilisant la commande chmod :
+
+chmod 644 cert.pem key.pem
+######################################################################## END PYTHON FILE ######################################################################################################################################################################
+Note importante : Si tu essaies de faire tourner ce serveur sur le port 443, tu auras probablement besoin de privilèges administratifs
+ou de root car les ports inférieurs à 1024 (comme le port 443) sont réservés aux processus avec des privilèges élevés 
+(cela varie en fonction de ton système d'exploitation).
+
+##############################################################################################################################################################################################################################################
+
+Port 443 est le port par défaut pour HTTPS, donc lorsque ton serveur Python est en cours d'exécution sur ce port,
+tu devrais pouvoir accéder à ton site ou fichier via https://localhost ou https://ton-ip-externe si tu veux y accéder depuis un autre appareil.
+
+
+ Générer un certificat SSL et une clé privée :
+Si tu n'as pas encore de certificat SSL et de clé privée, tu peux en générer un auto-signé à l'aide de OpenSSL. Voici comment faire :
+
+##############################################################################################################################################################################################################################################
