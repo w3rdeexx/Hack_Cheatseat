@@ -24,18 +24,18 @@ httpd.socket = ssl.wrap_socket(httpd.socket, certfile=certfile, keyfile=keyfile,
 
 print("Serving on https://localhost:443")
 httpd.serve_forever()
-Si les fichiers sont dans un répertoire spécifique (par exemple, /home/werdex/ssl/), utilise des chemins absolus comme ceci :
+######################################################################## END PYTHON FILE ######################################################################################################################################################################
 
+Si les fichiers sont dans un répertoire spécifique (par exemple, /home/werdex/ssl/), utilise des chemins absolus comme ceci :
 certfile = '/home/werdex/ssl/cert.pem'
 keyfile = '/home/werdex/ssl/key.pem'
-
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Vérifier les permissions :
 Si les fichiers existent mais que tu obtiens toujours l'erreur, assure-toi que ton utilisateur a bien les permissions nécessaires pour lire ces fichiers. Tu peux vérifier les permissions avec la commande suivante :
-
-ls -l cert.pem key.pem
+COMMANDE : ls -l cert.pem key.pem
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Si tu n'as pas les permissions adéquates, tu peux ajuster les permissions en utilisant la commande chmod :
-
-chmod 644 cert.pem key.pem
+COMMANDE : chmod 644 cert.pem key.pem
 ######################################################################## END PYTHON FILE ######################################################################################################################################################################
 Note importante : Si tu essaies de faire tourner ce serveur sur le port 443, tu auras probablement besoin de privilèges administratifs
 ou de root car les ports inférieurs à 1024 (comme le port 443) sont réservés aux processus avec des privilèges élevés 
@@ -46,8 +46,6 @@ ou de root car les ports inférieurs à 1024 (comme le port 443) sont réservés
 Port 443 est le port par défaut pour HTTPS, donc lorsque ton serveur Python est en cours d'exécution sur ce port,
 tu devrais pouvoir accéder à ton site ou fichier via https://localhost ou https://ton-ip-externe si tu veux y accéder depuis un autre appareil.
 
-
- Générer un certificat SSL et une clé privée :
-Si tu n'as pas encore de certificat SSL et de clé privée, tu peux en générer un auto-signé à l'aide de OpenSSL. Voici comment faire :
-
 ##############################################################################################################################################################################################################################################
+par la suite on a  juste a executer cette commande :
+sudo python3 nomdufichier 
